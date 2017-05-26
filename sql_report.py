@@ -2,24 +2,16 @@
 # coding: utf-8
 
 # SQL Report V1.0.1
-# Export SQL to HTML report
+# Export SQL to HTML report,export SQL to txt file.
 # Copyright (C) 2017-2017 Kinghow - Kinghow@hotmail.com
 # Git repository available at https://github.com/kinghows/SQL_Report
 
 import getopt
 import sys
-import MySQLdb
 import ConfigParser
-import prettytable
-from warnings import filterwarnings
+import time
 
-filterwarnings('ignore', category = MySQLdb.Warning)
-
-tab1="="
-tab2="*"
-linesize=104
-
-def f_get_conn(dbinfo):
+def f_get_conn(dbinfo,database_type):
     try:
         conn = MySQLdb.connect(host=dbinfo[0],user=dbinfo[1],passwd=dbinfo[2],port=int(dbinfo[3]))
         return conn
@@ -35,23 +27,24 @@ def f_get_query_record(conn, query):
     cursor.close()
     return records
 
-def f_print_title(title):
-    print
-    print ((linesize-4)/2 - int(len(title) / 2)) * tab1, title, ((linesize-4)/2+1 - int(len(title) / 2)) * tab1
-    print
-
 def f_print_table_txt(rows, title, style):
     field_names = []
-    f_print_title(title)
-    table = prettytable.PrettyTable()
+    begin_time=time.time()
+    print title+' export to txt ......'
+    f = open(title + '.txt', 'w')
     for k in style.keys():
         field_names.append(style[k].split(',')[0])
-    table.field_names = field_names
-    for k in style.keys():
-        table.align[style[k].split(',')[0]] = style[k].split(',')[1]
+    s = (',').join(field_names)+'\n'
+    f.write(s)
     for row in rows:
-        table.add_row(row)
-    print table
+        strrow=[]
+        for col in row:
+            strrow.append(str(col))
+        s = (',').join(strrow)+'\n'
+        f.write(s)
+    f.close()
+    exe_time=time.time()-begin_time
+    print title + ' export OK! '+str(exe_time) +' S'
 
 def f_print_table_html(rows, title, style):
     print """<p /><h3 class="awr"><a class="awr" name="99999"></a>""" + title + "</h3><p />"
@@ -99,9 +92,7 @@ def f_print_query_table(conn, title, query, style,save_as):
 
 def f_print_caption(report_title,save_as):
     if save_as == "txt":
-        print tab2 * linesize
-        print tab2, report_title.center(linesize - 4), tab2
-        print tab2 * linesize
+        print report_title+" begin export to txt"
     elif save_as == "html":
         print """
 <html>
@@ -143,9 +134,9 @@ table.tdiff {  border_collapse: collapse; }
 
 def f_print_ending(save_as):
     if save_as == "txt":
-        f_print_title('--@--  End  --@--')
-        print 'Generate by MySQL SQLReport V1.0.1'.center(linesize)
-        print 'https://github.com/kinghows/MySQL_SQLReport'.center(linesize)
+        print 'Export complete!'
+        print 'Generate by SQL_Report V1.0.1'
+        print 'https://github.com/kinghows/SQL_Report'
     elif save_as == "html":
         print """
 <p />
@@ -158,7 +149,8 @@ if __name__=="__main__":
     config_file="dbset.ini"
     report_title=""
     report_count = 0
-    save_as = "txt"
+    save_as = "html"
+    database_type = "MySQL"
 
     opts, args = getopt.getopt(sys.argv[1:], "p:s:")
     for o,v in opts:
@@ -176,9 +168,17 @@ if __name__=="__main__":
     dbinfo[3] = config.get("database", "port")
     report_title = config.get("report", "report_title")
     report_count = int(config.get("report", "report_count"))
+    database_type = config.get("database", "type")
+
+    if database_type == "MySQL":
+        import MySQLdb
+        from warnings import filterwarnings
+        filterwarnings('ignore', category=MySQLdb.Warning)
+    elif database_type == "Oracle":
+        import cx_Oracle
 
     f_print_caption(report_title,save_as)
-    conn = f_get_conn(dbinfo)
+    conn = f_get_conn(dbinfo,database_type)
 
     n = 1
     while n <= report_count:

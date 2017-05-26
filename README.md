@@ -1,13 +1,13 @@
 # SQL_Report
-Export SQL to HTML report.  
-
-Need install prettytable:
-
-pip install prettytable
+Export SQL to HTML report,export SQL to txt file.
 
 MySQL need install mysql-python:
 
 pip install mysql-python
+
+Oracle  need install cx_Oracle
+
+pip install cx_Oracle
 
 Test in Python-2.7
 
@@ -31,7 +31,13 @@ n must <=m
 
 execute:
 
+python sql_report.py >my_report.html
+
+python sql_report.py -p dbset.ini >my_report.html
+
 python sql_report.py -p dbset.ini -s html >my_report.html
+
+python sql_report.py -p dbset.ini -s txt
 
 use crontab regularly perform sql_report.sh
 
