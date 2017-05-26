@@ -12,26 +12,36 @@ import ConfigParser
 import time
 
 def f_get_conn(dbinfo,database_type):
-    try:
-        conn = MySQLdb.connect(host=dbinfo[0],user=dbinfo[1],passwd=dbinfo[2],port=int(dbinfo[3]))
-        return conn
-    except MySQLdb.Error, e:
-        print "Error %d: %s" % (e.args[0], e.args[1])
-        sys.exit(1)
+    if database_type == "MySQL":
+        try:
+            conn = MySQLdb.connect(host=dbinfo[0], user=dbinfo[1], passwd=dbinfo[2], port=int(dbinfo[3]))
+            return conn
+        except MySQLdb.Error, e:
+            print "Error %d: %s" % (e.args[0], e.args[1])
+            sys.exit(1)
+    elif database_type == "Oracle":
+        try:
+           #conn = cx_Oracle.connect(user, passwd, ip:port/sid)
+            conn = cx_Oracle.connect(dbinfo[1], dbinfo[2], dbinfo[0]+':'+dbinfo[3]+'/'+dbinfo[4])
+            return conn
+        except cx_Oracle.DatabaseError as msg:
+            print(msg)
+            sys.exit(1)
 
-def f_get_query_record(conn, query):
+def f_get_query_record(conn, query,database_type):
     cursor = conn.cursor()
-    cursor.execute('SET NAMES GBK')
+    if database_type == "MySQL":
+        cursor.execute('SET NAMES GBK')
     cursor.execute(query)
     records = cursor.fetchall()
     cursor.close()
     return records
 
-def f_print_table_txt(rows, title, style):
+def f_print_table_txt(rows, title, style,save_as):
     field_names = []
     begin_time=time.time()
-    print title+' export to txt ......'
-    f = open(title + '.txt', 'w')
+    print title+' export to '+save_as+' ......'
+    f = open(title + '.'+save_as, 'w')
     for k in style.keys():
         field_names.append(style[k].split(',')[0])
     s = (',').join(field_names)+'\n'
@@ -81,19 +91,19 @@ def f_print_table_html(rows, title, style):
         """
 
 def f_print_table(rows,title,style,save_as):
-    if save_as == "txt":
-        f_print_table_txt(rows, title, style)
-    elif save_as == "html":
+    if save_as == "html":
         f_print_table_html(rows, title, style)
+    elif save_as == "txt":
+        f_print_table_txt(rows, title, style,save_as)
+    elif save_as == "csv":
+        f_print_table_txt(rows, title, style,save_as)
 
-def f_print_query_table(conn, title, query, style,save_as):
-    rows = f_get_query_record(conn, query)
+def f_print_query_table(conn, title, query, style,save_as,database_type):
+    rows = f_get_query_record(conn, query,database_type)
     f_print_table(rows,title,style,save_as)
 
 def f_print_caption(report_title,save_as):
-    if save_as == "txt":
-        print report_title+" begin export to txt"
-    elif save_as == "html":
+    if save_as == "html":
         print """
 <html>
 <head>
@@ -131,21 +141,19 @@ table.tdiff {  border_collapse: collapse; }
        """
         print report_title
         print "</h1>"
+    else:
+        print report_title + " begin export to "+save_as
 
 def f_print_ending(save_as):
-    if save_as == "txt":
+    if save_as == "html":
+        print "<p />End of report</body></html>"
+    else:
         print 'Export complete!'
         print 'Generate by SQL_Report V1.0.1'
         print 'https://github.com/kinghows/SQL_Report'
-    elif save_as == "html":
-        print """
-<p />
-End of report
-</body></html>
-       """
 
 if __name__=="__main__":
-    dbinfo=["127.0.0.1","root","",3306] #host,user,passwd,port
+    dbinfo=["127.0.0.1","root","",3306,"orcl"] #host,user,passwd,port,sid
     config_file="dbset.ini"
     report_title=""
     report_count = 0
@@ -176,6 +184,7 @@ if __name__=="__main__":
         filterwarnings('ignore', category=MySQLdb.Warning)
     elif database_type == "Oracle":
         import cx_Oracle
+        dbinfo[4] = config.get("database", "sid")
 
     f_print_caption(report_title,save_as)
     conn = f_get_conn(dbinfo,database_type)
@@ -186,7 +195,7 @@ if __name__=="__main__":
         query = config.get ( "report", "query"+str(n))
         strstyle = config.get ( "report", "style"+str(n))
         style = eval(strstyle)
-        f_print_query_table(conn, title, query, style,save_as)
+        f_print_query_table(conn, title, query, style,save_as,database_type)
         n += 1
 
     conn.close()

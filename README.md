@@ -39,6 +39,8 @@ python sql_report.py -p dbset.ini -s html >my_report.html
 
 python sql_report.py -p dbset.ini -s txt
 
+python sql_report.py -p dbset.ini -s csv
+
 use crontab regularly perform sql_report.sh
 
 If your report results are in other languages, modify the cursor.execute('SET NAMES GBK') as the appropriate encoding format.and -s txt will report an error.
