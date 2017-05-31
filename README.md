@@ -29,6 +29,11 @@ stylem =***
 
 n must <=m
 
+example:
+
+![txt example](https://github.com/kinghows/SQL_Report/blob/master/txt.jpg)
+![html example](https://github.com/kinghows/SQL_Report/blob/master/html.jpg)
+
 execute:
 
 python sql_report.py >my_report.html
