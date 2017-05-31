@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 
-# SQL Report V1.1.0
+# SQL Report V1.1.1
 # Export SQL to HTML report,export SQL to txt file.
 # Copyright (C) 2017-2017 Kinghow - Kinghow@hotmail.com
 # Git repository available at https://github.com/kinghows/SQL_Report
@@ -39,7 +39,7 @@ def f_get_query_record(conn, query,database_type):
 def f_print_table_txt(rows, title, style,save_as):
     field_names = []
     begin_time=time.time()
-    print title+' export to '+save_as+' ......'
+    print (title+' export to '+save_as).ljust(50,"."),
     f = open(title + '.'+save_as, 'w')
     for k in style.keys():
         field_names.append(style[k].split(',')[0])
@@ -53,7 +53,7 @@ def f_print_table_txt(rows, title, style,save_as):
         f.write(s)
     f.close()
     exe_time=time.time()-begin_time
-    print title + ' export OK! '+str(exe_time) +' S'
+    print (' export OK! '+str(exe_time) +' S').rjust(50,".")
 
 def f_print_table_html(rows, title, style):
     print """<p /><h3 class="awr"><a class="awr" name="99999"></a>""" + title + "</h3><p />"
@@ -92,9 +92,7 @@ def f_print_table_html(rows, title, style):
 def f_print_table(rows,title,style,save_as):
     if save_as == "html":
         f_print_table_html(rows, title, style)
-    elif save_as == "txt":
-        f_print_table_txt(rows, title, style,save_as)
-    elif save_as == "csv":
+    elif save_as == "txt" or save_as == "csv":
         f_print_table_txt(rows, title, style,save_as)
 
 def f_print_query_table(conn, title, query, style,save_as,database_type):
@@ -107,7 +105,7 @@ def f_print_caption(report_title,save_as):
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Generate by SQL_Report V1.1.0 https://github.com/kinghows/SQL_Report </title>
+<title>Generate by SQL_Report V1.1.1 https://github.com/kinghows/SQL_Report </title>
 <style type=\"text/css\">
 body.awr {font:bold 10pt Arial,Helvetica,Geneva,sans-serif;color:black; background:White;}
 pre.awr  {font:8pt Courier;color:black; background:White;}
@@ -148,7 +146,7 @@ def f_print_ending(save_as):
         print "<p />End of report</body></html>"
     else:
         print 'Export complete!'
-        print 'Generate by SQL_Report V1.0.1'
+        print 'Generate by SQL_Report V1.1.1'
         print 'https://github.com/kinghows/SQL_Report'
 
 if __name__=="__main__":
