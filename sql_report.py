@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 
-# SQL Report V1.1.1
+# SQL Report V1.1.2
 # Export SQL to HTML report,export SQL to txt file.
 # Copyright (C) 2017-2017 Kinghow - Kinghow@hotmail.com
 # Git repository available at https://github.com/kinghows/SQL_Report
@@ -104,8 +104,8 @@ def f_print_caption(report_title,save_as):
         print """
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Generate by SQL_Report V1.1.1 https://github.com/kinghows/SQL_Report </title>
+<meta http-equiv="Content-Type" content="text/html" />
+<title>Generate by SQL_Report V1.1.2 https://github.com/kinghows/SQL_Report </title>
 <style type=\"text/css\">
 body.awr {font:bold 10pt Arial,Helvetica,Geneva,sans-serif;color:black; background:White;}
 pre.awr  {font:8pt Courier;color:black; background:White;}
@@ -146,7 +146,7 @@ def f_print_ending(save_as):
         print "<p />End of report</body></html>"
     else:
         print 'Export complete!'
-        print 'Generate by SQL_Report V1.1.1'
+        print 'Generate by SQL_Report V1.1.2'
         print 'https://github.com/kinghows/SQL_Report'
 
 if __name__=="__main__":
