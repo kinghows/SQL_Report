@@ -9,6 +9,12 @@ Oracle  need install cx_Oracle
 
 pip install cx_Oracle
 
+Save as xlsx need install pandas,openpyxl:
+
+easy_install openpyxl
+
+pip install pandas
+
 Test in Python-2.7
 
 Edit  connect info in dbset.ini [database] part.
@@ -45,6 +51,8 @@ python sql_report.py -p dbset.ini -s html >my_report.html
 python sql_report.py -p dbset.ini -s txt
 
 python sql_report.py -p dbset.ini -s csv
+
+python sql_report.py -p dbset.ini -s xls
 
 use crontab regularly perform sql_report.sh
 

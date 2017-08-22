@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 
-# SQL Report V1.1.2
+# SQL Report V1.1.5
 # Export SQL to HTML report,export SQL to txt file.
 # Copyright (C) 2017-2017 Kinghow - Kinghow@hotmail.com
 # Git repository available at https://github.com/kinghows/SQL_Report
@@ -39,7 +39,7 @@ def f_get_query_record(conn, query,database_type):
 def f_print_table_txt(rows, title, style,save_as):
     field_names = []
     begin_time=time.time()
-    print (title+' export to '+save_as).ljust(50,"."),
+    print (title+' export to '+save_as).ljust(25,"."),
     f = open(title + '.'+save_as, 'w')
     for k in style.keys():
         field_names.append(style[k].split(',')[0])
@@ -52,6 +52,20 @@ def f_print_table_txt(rows, title, style,save_as):
         s = (',').join(strrow)+'\n'
         f.write(s)
     f.close()
+    exe_time=time.time()-begin_time
+    print (' export OK! '+str(exe_time) +' S').rjust(50,".")
+
+def f_print_table_xls(query,conn,title):
+    import pandas as pd
+    begin_time=time.time()
+    print ('export to '+title + '.xlsx').ljust(25,"."),
+    filename = title + '.xlsx'
+    cursor = conn.cursor()
+    if database_type == "MySQL":
+        cursor.execute('SET NAMES UTF8')
+    df = pd.read_sql(query,conn)
+    dret = pd.DataFrame(df)
+    dret.to_excel(filename, "Sheet1")
     exe_time=time.time()-begin_time
     print (' export OK! '+str(exe_time) +' S').rjust(50,".")
 
@@ -89,15 +103,14 @@ def f_print_table_html(rows, title, style):
 <p />
         """
 
-def f_print_table(rows,title,style,save_as):
+def f_print_query_table(conn, title, query, style,save_as,database_type):
+    rows = f_get_query_record(conn, query,database_type)
     if save_as == "html":
         f_print_table_html(rows, title, style)
     elif save_as == "txt" or save_as == "csv":
         f_print_table_txt(rows, title, style,save_as)
-
-def f_print_query_table(conn, title, query, style,save_as,database_type):
-    rows = f_get_query_record(conn, query,database_type)
-    f_print_table(rows,title,style,save_as)
+    elif save_as == "xls":
+        f_print_table_xls(query,conn,title)
 
 def f_print_caption(report_title,save_as):
     if save_as == "html":
@@ -105,7 +118,7 @@ def f_print_caption(report_title,save_as):
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html" />
-<title>Generate by SQL_Report V1.1.2 https://github.com/kinghows/SQL_Report </title>
+<title>Generate by SQL_Report V1.1.5 https://github.com/kinghows/SQL_Report </title>
 <style type=\"text/css\">
 body.awr {font:bold 10pt Arial,Helvetica,Geneva,sans-serif;color:black; background:White;}
 pre.awr  {font:8pt Courier;color:black; background:White;}
@@ -146,7 +159,7 @@ def f_print_ending(save_as):
         print "<p />End of report</body></html>"
     else:
         print 'Export complete!'
-        print 'Generate by SQL_Report V1.1.2'
+        print 'Generate by SQL_Report V1.1.5'
         print 'https://github.com/kinghows/SQL_Report'
 
 if __name__=="__main__":
