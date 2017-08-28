@@ -179,7 +179,6 @@ if __name__=="__main__":
 
     config = ConfigParser.ConfigParser()
     config.readfp(open(config_file,"rb"))
-    config.readfp(open(config_file,"rb"))
     dbinfo[0] = config.get("database","host")
     dbinfo[1] = config.get("database","user")
     dbinfo[2] = config.get("database","passwd")

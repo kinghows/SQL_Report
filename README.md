@@ -56,7 +56,7 @@ python sql_report.py -p dbset.ini -s xls
 
 send email:
 
-python SendEmail.py -p emailset.ini -f my_report.html
+python SendEmail.py -p emailset.ini -f my_report1.html,my_report2.html
 
 use crontab regularly perform sql_report.sh,auto generate  report,and send email.
 
