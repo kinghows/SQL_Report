@@ -54,7 +54,11 @@ python sql_report.py -p dbset.ini -s csv
 
 python sql_report.py -p dbset.ini -s xls
 
-use crontab regularly perform sql_report.sh
+send email:
+
+python SendEmail.py -p emailset.ini -f my_report.html
+
+use crontab regularly perform sql_report.sh,auto generate  report,and send email.
 
 If your mysql report results are in other languages, modify the cursor.execute('SET NAMES GBK') as the appropriate encoding format.
 
