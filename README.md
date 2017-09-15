@@ -1,5 +1,5 @@
 # SQL_Report
-Export SQL to HTML report,export SQL to txt file.
+Export SQL to HTML report,export SQL to txt/csv/xls file.
 
 MySQL need install mysql-python:
 
