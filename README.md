@@ -1,9 +1,15 @@
 # SQL_Report
 Export SQL to HTML report,export SQL to txt/csv/xls file.
 
-MySQL need install mysql-python:
+MySQL need install 
+
+2.7：
 
 pip install mysql-python
+
+3.8:
+
+pip install mysqlclient
 
 Oracle  need install cx_Oracle
 
@@ -14,8 +20,6 @@ Save as xlsx need install pandas,openpyxl:
 easy_install openpyxl
 
 pip install pandas
-
-Test in Python-2.7
 
 Edit  connect info in dbset.ini [database] part.
 
@@ -42,6 +46,8 @@ example:
 
 execute:
 
+2.7:
+
 python sql_report.py >my_report.html
 
 python sql_report.py -p dbset.ini >my_report.html
@@ -57,6 +63,12 @@ python sql_report.py -p dbset.ini -s xls
 send email:
 
 python SendEmail.py -p emailset.ini -f my_report1.html,my_report2.html
+
+3.8:
+
+python3 sql_report3.py >my_report.html
+
+python3 SendEmail3.py -p emailset.ini -f my_report1.html,my_report2.html
 
 use crontab regularly perform sql_report.sh,auto generate  report,and send email.
 
