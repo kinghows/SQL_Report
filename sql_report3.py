@@ -39,7 +39,7 @@ def f_get_query_record(conn, query,database_type):
 def f_print_table_txt(rows, title, style,save_as):
     field_names = []
     begin_time=time.time()
-    print ((title+' export to '+save_as).ljust(25,"."),end='')
+    #print ((title+' export to '+save_as).ljust(25,"."),end='')
     f = open(title + '.'+save_as, 'w')
     for k in style.keys():
         field_names.append(style[k].split(',')[0])
@@ -55,17 +55,19 @@ def f_print_table_txt(rows, title, style,save_as):
     exe_time=time.time()-begin_time
     print ((' export OK! '+str(exe_time) +' S').rjust(50,"."))
 
-def f_print_table_xls(query,conn,title):
+def f_print_table_xls(query,conn,title,style):
     import pandas as pd
+    field_names = []
     begin_time=time.time()
-    print (('export to '+title + '.xlsx').ljust(25,"."),end='')
+    #print (('export to '+title + '.xlsx').ljust(25,"."),end='')
     filename = title + '.xlsx'
     cursor = conn.cursor()
     if database_type == "MySQL":
         cursor.execute('SET NAMES UTF8')
     df = pd.read_sql(query,conn)
-    dret = pd.DataFrame(df)
-    dret.to_excel(filename, "Sheet1")
+    for k in style.keys():
+        field_names.append(style[k].split(',')[0].decode('GB2312'))
+    df.to_excel(filename, "Sheet1")
     exe_time=time.time()-begin_time
     print ((' export OK! '+str(exe_time) +' S').rjust(50,"."))
 
@@ -110,7 +112,7 @@ def f_print_query_table(conn, title, query, style,save_as,database_type):
     elif save_as == "txt" or save_as == "csv":
         f_print_table_txt(rows, title, style,save_as)
     elif save_as == "xls":
-        f_print_table_xls(query,conn,title)
+        f_print_table_xls(query,conn,title,style)
 
 def f_print_caption(report_title,save_as):
     if save_as == "html":
