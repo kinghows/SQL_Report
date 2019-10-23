@@ -60,15 +60,25 @@ def f_print_table_xls(query,conn,title,style):
     field_names = []
     begin_time=time.time()
     print ('export to '+title + '.xlsx').ljust(25,"."),
-    filename = title + '.xlsx'
     cursor = conn.cursor()
-    if database_type == "MySQL":
-        cursor.execute('SET NAMES UTF8')
     df = pd.read_sql(query,conn)
+    #SQL内有中文的处理方案1：
     for k in style.keys():
-        field_names.append(style[k].split(',')[0].decode('GB2312'))
+        field_names.append(style[k].split(',')[0].decode('GBk'))
     df.columns = field_names
-    df.to_excel(filename, "Sheet1")
+    cols = df.columns
+    for e in cols:
+        df[e] = df[e].map(lambda x: str(x).decode("gbk").encode("raw_unicode_escape").decode(
+            "raw_unicode_escape"))
+    df.to_excel(title + '.xlsx')
+    #SQL内有中文的处理方案2：
+    #for k in style.keys():
+    #    field_names.append(style[k].split(',')[0])
+    #df.columns = field_names
+    #df.to_csv(title + '.csv')
+    #data = pd.read_csv(title + '.csv',header=None, encoding='gbk',sep=',')
+    #df = pd.DataFrame(data)
+    #df.to_excel(title + '.xlsx')
     exe_time=time.time()-begin_time
     print (' export OK! '+str(exe_time) +' S').rjust(50,".")
 
