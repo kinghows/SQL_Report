@@ -30,8 +30,10 @@ def f_get_conn(dbinfo,database_type):
 def f_get_query_record(conn, query,database_type):
     cursor = conn.cursor()
     if database_type == "MySQL":
-        cursor.execute('SET NAMES GBK')
-    cursor.execute(query)
+        cursor.execute('SET NAMES utf8') 
+        cursor.execute('SET CHARACTER SET utf8;')
+        cursor.execute('SET character_set_connection=utf8;')
+    cursor.execute(query.encode('utf-8'))
     records = cursor.fetchall()
     cursor.close()
     return records
@@ -59,17 +61,16 @@ def f_print_table_xls(query,conn,title,style):
     import pandas as pd
     field_names = []
     begin_time=time.time()
-    #print (('export to '+title + '.xlsx').ljust(25,"."),end='')
+    print (('export to '+title + '.xlsx').ljust(25,"."))
     cursor = conn.cursor()
-    df = pd.read_sql(query,conn)
+    df = pd.read_sql(query.encode('utf-8'),conn)
     #SQL内有中文的处理方案1：
     for k in style.keys():
-        field_names.append(style[k].split(',')[0].decode('GBk'))
+        field_names.append(style[k].split(',')[0])
     df.columns = field_names
     cols = df.columns
     for e in cols:
-        df[e] = df[e].map(lambda x: str(x).decode("gbk").encode("raw_unicode_escape").decode(
-            "raw_unicode_escape"))
+        df[e] = df[e].map(lambda x: str(x).encode('raw_unicode_escape').decode('utf-8'))
     df.to_excel(title + '.xlsx')
     #SQL内有中文的处理方案2：
     #for k in style.keys():
@@ -191,7 +192,8 @@ if __name__=="__main__":
             save_as = v
 
     config = configparser.ConfigParser()
-    config.read(config_file)
+    config.read(config_file,encoding="utf-8-sig")
+    #config.read(config_file)
     dbinfo[0] = config.get("database","host")
     dbinfo[1] = config.get("database","user")
     dbinfo[2] = config.get("database","passwd")

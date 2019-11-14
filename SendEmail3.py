@@ -21,7 +21,8 @@ for o, v in opts:
         attfile = v
 
 config = configparser.ConfigParser()
-config.read(config_file)
+config.read(config_file,encoding="utf-8-sig")
+#config.read(config_file)
 Email_host = config.get("Email", "host")
 Email_port = config.get("Email", "port")
 Email_user = config.get("Email", "user")
