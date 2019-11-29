@@ -75,3 +75,11 @@ use crontab regularly perform sql_report.sh,auto generate  report,and send email
 If your mysql report results are in other languages, modify the cursor.execute('SET NAMES GBK') as the appropriate encoding format.
 
 Enjoy it! 
+
+## 好用的DBA系列，喜欢的打颗星：
+
+- [MySQL_Watcher：数据库的HTML监控报告](https://github.com/kinghows/MySQL_Watcher)
+
+- [SQL_Report：自定义SQL生成HTML报告](https://github.com/kinghows/SQL_Report)
+
+- [SQL_Chart：自定义SQL生成HTML图表报告](https://github.com/kinghows/SQL_Chart)
